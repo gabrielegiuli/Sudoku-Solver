@@ -3,10 +3,14 @@
 //
 //Gabriele Giuli, all rights reserved
 
+//Length of the side of each tile
 const TILE_LENGTH = 30;
+
+//Coordinates of the origin of the table
 const x = 5;
 const y = 5;
 
+//Declaring the two dimensional array that holds the data of the table
 var tableData = [];
 for(var i = 0; i < 9; i++) {
   tableData[i] = [];
@@ -15,19 +19,24 @@ for(var i = 0; i < 9; i++) {
   }
 }
 
+//Variables that will be used later on to indicate the selected tile
 var a = null;
 var b = null;
 
+//Called once the page has loaded
 function setup() {
-  createCanvas(370, 370);
+  createCanvas(300, 300);
+  background(255);
   drawTable();
-
 }
 
+//Call when the user clicks with the mouse
 function mousePressed() {
 
   //print('Mouse: ' + mouseX + ' ' + mouseY);
 
+  //Checks the coordinates of the mose and assignes to 'a' and 'b' the relative
+  //value to access the corresponding element in the array
   for(var i = 0; i < 9; i++) {
     if(mouseX > x + i * TILE_LENGTH && mouseX < x + ((i + 1) * TILE_LENGTH)) {
       a = i;
@@ -39,6 +48,8 @@ function mousePressed() {
 
   //print('a: ' + a + ' - b: ' + b);
 
+  //If the location of the cursor is in the table, draw a blue rectangle on the
+  //selected tile, to highlight that
   if(a != null && b != null) {
     background(255);
     drawTable();
@@ -52,25 +63,38 @@ function mousePressed() {
   }
 }
 
+//Called when the user presses a button on the keyboard
 function keyPressed() {
+  //Checks if the user is pressing the numbers
   if(key >= 1 && key <= 9) {
-    print('Number selected: ' + key);
+    //print('Number selected: ' + key);
 
+    //If a tile is selected, set its value to the designated one and update the table
     if(a != null && b != null) {
       tableData[a][b] = key;
       background(255);
       drawTable();
+      a = null;
+      b = null;
     }
-  } else if(keyCode == 83) { //'s'
+  } else if(keyCode == 83) { //If the letter 's' is typed sole the sudoku
     print('Solving...');
     solve();
+  } else if(keyCode == 32 && a != null && b != null) { //If the space bar is pressed clear the selected tile
+    tableData[a][b] = null;
+    background(255);
+    drawTable();
   }
 }
 
+//Draws the table (lines and numbers in tiles)
 function drawTable() {
   stroke(0, 0, 0);
   fill(0, 0, 0);
+
+  //Draws the lines
   for(var i = 0; i < 10; i++) {
+    //Sets the stroke weight according to the position
     if(i % 3 == 0) {
       strokeWeight(2);
     } else {
@@ -80,6 +104,7 @@ function drawTable() {
     line(x + i * TILE_LENGTH, y, x + i * TILE_LENGTH, y + 9 * TILE_LENGTH);
   }
 
+  //Prints the numbers in the tiles
   for(var i = 0; i < 9; i++) {
     for(var j = 0; j < 9; j++) {
       if(tableData[i][j] != null) {
@@ -90,6 +115,7 @@ function drawTable() {
   }
 }
 
+//Prints the table's data in the console (not used anymore, only for debugging purposes)
 function printData() {
   for(var i = 0; i < 9; i++) {
     console.log('');
@@ -99,26 +125,40 @@ function printData() {
   }
 }
 
+//Solve the puzzle
 function solve() {
   var changed;
+
+  //Repeats this process until there are no further changes in the data
   do {
-    changed = false;
-    for(var i = 0; i < 9; i++) {
-      for(var j = 0; j < 9; j++) {
-        let res = getPossibleNumbers(i, j);
-        print('Possible: ' + res + ' - Coordinate: ' + i + ' - ' + j + ' - Value: ' + tableData[i][j]);
-        if(res.length == 1 && tableData[i][j] == null) {
-          print('Done');
-          tableData[i][j] = res[0];
-          background(255);
-          drawTable();
-          changed = true;
-        }
-      }
-    }
+    changed = rawCheckSolve();
   } while(changed);
 }
 
+//Simply checks for single possibilities
+function rawCheckSolve() {
+  var changed = false;
+  for(var i = 0; i < 9; i++) {
+    for(var j = 0; j < 9; j++) {
+      let res = getPossibleNumbers(i, j);
+      //print('Possible: ' + res + ' - Coordinate: ' + i + ' - ' + j + ' - Value: ' + tableData[i][j]);
+
+      //If there's only one possibility and the tile is empty, put that possibility in that tile
+      if(res.length == 1 && tableData[i][j] == null) {
+        //print('Done');
+        tableData[i][j] = res[0];
+        background(255);
+        drawTable();
+        changed = true;
+      }
+    }
+  }
+  //Returns whether it has changed anything in the table or not
+  return changed;
+}
+
+//Returns an array containing the other numbers in the horizontal line that
+//conatins the tile associated to the coordinates passed as parameters
 function getHorizontalLine(a, b) {
   var array = [];
   for(var i = 0; i < 9; i++) {
@@ -129,6 +169,8 @@ function getHorizontalLine(a, b) {
   return array;
 }
 
+//Returns an array containing the other numbers in the vertical line that
+//conatins the tile associated to the coordinates passed as parameters
 function getVerticalLine(a, b) {
   var array = [];
   for(var i = 0; i < 9; i++) {
@@ -139,6 +181,8 @@ function getVerticalLine(a, b) {
   return array;
 }
 
+//Returns an array containing the other numbers in the square that
+//conatins the tile associated to the coordinates passed as parameters
 function getSquare(a, b) {
   var array = [];
   var res = getInitialSquareTile(a, b);
@@ -154,6 +198,8 @@ function getSquare(a, b) {
   return array;
 }
 
+//Returns the coordinates of the first tile of the square that contains the
+//tile associated to the coordinates passed as parameters
 function getInitialSquareTile(a, b) {
   var res = { a: null, b : null };
 
@@ -176,6 +222,7 @@ function getInitialSquareTile(a, b) {
   return res;
 }
 
+//Returns an array that contains all the possible numbers that can be put in the tile
 function getPossibleNumbers(a, b) {
   var horizontalLine = getHorizontalLine(a, b);
   var verticalLine = getVerticalLine(a, b);
@@ -207,4 +254,17 @@ function getPossibleNumbers(a, b) {
     }
   }
   return array;
+}
+
+//Checks if all the tiles in the table are not empty
+function isComplete() {
+  var c = 0;
+  for(var i = 0; i < 9; i++) {
+    for(var j = 0; j < 9; j++) {
+      if(tableData[i][j] != null) {
+        c++;
+      }
+    }
+  }
+  return c == 81;
 }
