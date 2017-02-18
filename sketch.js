@@ -3,6 +3,19 @@
 //
 //Gabriele Giuli, all rights reserved
 
+/*
+General informations on the algorithm:
+
+The solving algorithm consists of two different parts: one that solves by simply
+looking for the possible numbers in a tile, and if there is only one it just puts
+that number in that tile. The other part consist in picking a tile (the one with
+less possible numbers) and trying to solve the puzzle by substutuing one of the
+possible numbers in that tile and continuing until the puzzle is either done,
+not possible (that would imply to change the value at the particular tile) or
+another case of "uncertanty" is present, in this case  is necessary to use the
+"backtracking" part of the algorithm again.
+*/
+
 //Length of the side of each tile
 const TILE_LENGTH = 30;
 
@@ -267,4 +280,32 @@ function isComplete() {
     }
   }
   return c == 81;
+}
+
+//Returns the coordinates of the cell with less possibilities in the table
+//and the array containing the possible numbers. This function will be used
+//to create the various possibilities in the backtracking part of the algorithm.
+function getFreeCell() {
+  var min = { value: null, a: null, b: null, array: null };
+  for(let i = 0; i < 9; i++) {
+    for(let j = 0; j < 9; j++) {
+      if(tableData[i][j] == null) {
+        let result = getPossibleNumbers(i, j);
+
+        if(min.value == null) {
+          min.value = result.length;
+          min.a = i;
+          min.b = j;
+          min.array = result;
+        } else if(result.length < min.value) {
+          min.value = result.length;
+          min.a = i;
+          min.b = j;
+          min.array = result;
+        }
+
+      }
+    }
+  }
+  return min;
 }
