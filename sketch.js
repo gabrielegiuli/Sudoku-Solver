@@ -144,22 +144,22 @@ function solve() {
 
   //Repeats this process until there are no further changes in the data
   do {
-    changed = rawCheckSolve();
+    changed = rawCheckSolve(tableData);
   } while(changed);
 }
 
 //Simply checks for single possibilities
-function rawCheckSolve() {
+function rawCheckSolve(data) {
   var changed = false;
   for(var i = 0; i < 9; i++) {
     for(var j = 0; j < 9; j++) {
-      let res = getPossibleNumbers(i, j);
-      //print('Possible: ' + res + ' - Coordinate: ' + i + ' - ' + j + ' - Value: ' + tableData[i][j]);
+      let res = getPossibleNumbers(i, j, data);
+      //print('Possible: ' + res + ' - Coordinate: ' + i + ' - ' + j + ' - Value: ' + data[i][j]);
 
       //If there's only one possibility and the tile is empty, put that possibility in that tile
-      if(res.length == 1 && tableData[i][j] == null) {
+      if(res.length == 1 && data[i][j] == null) {
         //print('Done');
-        tableData[i][j] = res[0];
+        data[i][j] = res[0];
         background(255);
         drawTable();
         changed = true;
@@ -172,11 +172,11 @@ function rawCheckSolve() {
 
 //Returns an array containing the other numbers in the horizontal line that
 //conatins the tile associated to the coordinates passed as parameters
-function getHorizontalLine(a, b) {
+function getHorizontalLine(a, b, data) {
   var array = [];
   for(var i = 0; i < 9; i++) {
-    if(i != a && tableData[i][b] != null) {
-      array.push(tableData[i][b]);
+    if(i != a && data[i][b] != null) {
+      array.push(data[i][b]);
     }
   }
   return array;
@@ -184,11 +184,11 @@ function getHorizontalLine(a, b) {
 
 //Returns an array containing the other numbers in the vertical line that
 //conatins the tile associated to the coordinates passed as parameters
-function getVerticalLine(a, b) {
+function getVerticalLine(a, b, data) {
   var array = [];
   for(var i = 0; i < 9; i++) {
-    if(i != b && tableData[a][i] != null) {
-      array.push(tableData[a][i]);
+    if(i != b && data[a][i] != null) {
+      array.push(data[a][i]);
     }
   }
   return array;
@@ -196,14 +196,14 @@ function getVerticalLine(a, b) {
 
 //Returns an array containing the other numbers in the square that
 //conatins the tile associated to the coordinates passed as parameters
-function getSquare(a, b) {
+function getSquare(a, b, data) {
   var array = [];
   var res = getInitialSquareTile(a, b);
 
   for(var i = res.a; i < res.a + 3; i++) {
     for(var j = res.b; j < res.b + 3; j++) {
-      if((i != a || j != b) && tableData[i][j] != null) {
-        array.push(tableData[i][j]);
+      if((i != a || j != b) && data[i][j] != null) {
+        array.push(data[i][j]);
       }
     }
   }
@@ -236,10 +236,10 @@ function getInitialSquareTile(a, b) {
 }
 
 //Returns an array that contains all the possible numbers that can be put in the tile
-function getPossibleNumbers(a, b) {
-  var horizontalLine = getHorizontalLine(a, b);
-  var verticalLine = getVerticalLine(a, b);
-  var square = getSquare(a, b);
+function getPossibleNumbers(a, b, data) {
+  var horizontalLine = getHorizontalLine(a, b, data);
+  var verticalLine = getVerticalLine(a, b, data);
+  var square = getSquare(a, b, data);
 
   var array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -270,11 +270,11 @@ function getPossibleNumbers(a, b) {
 }
 
 //Checks if all the tiles in the table are not empty
-function isComplete() {
+function isComplete(data) {
   var c = 0;
   for(var i = 0; i < 9; i++) {
     for(var j = 0; j < 9; j++) {
-      if(tableData[i][j] != null) {
+      if(data[i][j] != null) {
         c++;
       }
     }
@@ -285,11 +285,11 @@ function isComplete() {
 //Returns the coordinates of the cell with less possibilities in the table
 //and the array containing the possible numbers. This function will be used
 //to create the various possibilities in the backtracking part of the algorithm.
-function getFreeCell() {
+function getFreeCell(data) {
   var min = { value: null, a: null, b: null, array: null };
   for(let i = 0; i < 9; i++) {
     for(let j = 0; j < 9; j++) {
-      if(tableData[i][j] == null) {
+      if(data[i][j] == null) {
         let result = getPossibleNumbers(i, j);
 
         if(min.value == null) {
@@ -308,4 +308,8 @@ function getFreeCell() {
     }
   }
   return min;
+}
+
+function generateTables(data) {
+
 }
