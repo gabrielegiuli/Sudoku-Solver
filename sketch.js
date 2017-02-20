@@ -92,7 +92,9 @@ function keyPressed() {
     }
   } else if(keyCode == 83) { //If the letter 's' is typed sole the sudoku
     print('Solving...');
-    solve();
+    tableData = solve(tableData);
+    background(255);
+    drawTable();
   } else if(keyCode == 32 && a != null && b != null) { //If the space bar is pressed clear the selected tile
     tableData[a][b] = null;
     background(255);
@@ -139,13 +141,36 @@ function printData() {
 }
 
 //Solve the puzzle
-function solve() {
+function solve(data) {
+  var table = [];
+
+  //Copies data into table
+  for(var i = 0; i < 9; i++) {
+    table[i] = [];
+    for(var j = 0; j < 9; j++) {
+      table[i][j] = data[i][j];
+    }
+  }
+
   var changed;
 
   //Repeats this process until there are no further changes in the data
   do {
-    changed = rawCheckSolve(tableData);
+    changed = rawCheckSolve(table); //Tries to solve simply by following sudoku's rule
   } while(changed);
+
+  /*if(!isComplete(table)) { //If after that the table is not complete yet it tries with backtracking
+    var tables = generateTables(table); //Generates the tables (creates a new node)
+
+    if(tables.length == 0) { //If there are no tables...
+      return null; //Exits the recursion with null
+    }
+    for(var i = 0; i < tables.length; i++) {
+      let result = solve(table[i]);
+    }*/
+  //} else {
+    return table;
+  //}
 }
 
 //Simply checks for single possibilities
@@ -160,8 +185,8 @@ function rawCheckSolve(data) {
       if(res.length == 1 && data[i][j] == null) {
         //print('Done');
         data[i][j] = res[0];
-        background(255);
-        drawTable();
+        //background(255);
+        //drawTable();
         changed = true;
       }
     }
@@ -310,6 +335,8 @@ function getFreeCell(data) {
   return min;
 }
 
+//Returns all the possible tables that can be generated from a random choice of a
+//number. Beginning of the backtrack algorithm
 function generateTables(data) {
   var cell = getFreeCell(data);
   var tables = [];
