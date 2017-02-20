@@ -18,6 +18,7 @@ another case of "uncertanty" is present, in this case  is necessary to use the
 
 //Length of the side of each tile
 const TILE_LENGTH = 30;
+var BACKTRACKING_ENABLED = true;
 
 //Coordinates of the origin of the table
 const x = 5;
@@ -159,18 +160,23 @@ function solve(data) {
     changed = rawCheckSolve(table); //Tries to solve simply by following sudoku's rule
   } while(changed);
 
-  /*if(!isComplete(table)) { //If after that the table is not complete yet it tries with backtracking
+  if(!isComplete(table) && BACKTRACKING_ENABLED) { //If after that the table is not complete yet it tries with backtracking
     var tables = generateTables(table); //Generates the tables (creates a new node)
 
     if(tables.length == 0) { //If there are no tables...
       return null; //Exits the recursion with null
     }
     for(var i = 0; i < tables.length; i++) {
-      let result = solve(table[i]);
-    }*/
-  //} else {
+      let result = solve(tables[i]);
+      if(result != null) {
+        if(isComplete(result)) {
+          return result;
+        }
+      }
+    }
+  } else {
     return table;
-  //}
+  }
 }
 
 //Simply checks for single possibilities
