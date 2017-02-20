@@ -290,7 +290,7 @@ function getFreeCell(data) {
   for(let i = 0; i < 9; i++) {
     for(let j = 0; j < 9; j++) {
       if(data[i][j] == null) {
-        let result = getPossibleNumbers(i, j);
+        let result = getPossibleNumbers(i, j, data);
 
         if(min.value == null) {
           min.value = result.length;
@@ -311,5 +311,22 @@ function getFreeCell(data) {
 }
 
 function generateTables(data) {
+  var cell = getFreeCell(data);
+  var tables = [];
 
+  for(var k = 0; k < cell.array.length; k++) {
+    let currentTable = [];
+    for(var i = 0; i < 9; i++) {
+      currentTable[i] = [];
+      for(var j = 0; j < 9; j++) {
+        if(i == cell.a && j == cell.b) {
+          currentTable[i][j] = cell.array[k];
+        } else {
+          currentTable[i][j] = data[i][j];
+        }
+      }
+    }
+    tables.push(currentTable);
+  }
+  return tables;
 }
