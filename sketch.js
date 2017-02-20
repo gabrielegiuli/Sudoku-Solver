@@ -16,6 +16,8 @@ another case of "uncertanty" is present, in this case  is necessary to use the
 "backtracking" part of the algorithm again.
 */
 
+//Developed by Gabriele Giuli at the age of 17
+
 //Length of the side of each tile
 const TILE_LENGTH = 30;
 var BACKTRACKING_ENABLED = true;
