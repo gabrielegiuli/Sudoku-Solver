@@ -42,7 +42,6 @@ var b = null;
 //Called once the page has loaded
 function setup() {
   createCanvas(300, 300);
-  background(255);
   drawTable(tableData);
 }
 
@@ -67,7 +66,6 @@ function mousePressed() {
   //If the location of the cursor is in the table, draw a blue rectangle on the
   //selected tile, to highlight that
   if(a != null && b != null) {
-    background(255);
     drawTable(tableData);
 
     noFill();
@@ -88,7 +86,6 @@ function keyPressed() {
     //If a tile is selected, set its value to the designated one and update the table
     if(a != null && b != null) {
       tableData[a][b] = key;
-      background(255);
       drawTable(tableData);
       a = null;
       b = null;
@@ -96,11 +93,9 @@ function keyPressed() {
   } else if(keyCode == 83) { //If the letter 's' is typed sole the sudoku
     print('Solving...');
     tableData = solve(tableData);
-    background(255);
     drawTable(tableData);
   } else if(keyCode == 32 && a != null && b != null) { //If the space bar is pressed clear the selected tile
     tableData[a][b] = null;
-    background(255);
     drawTable(tableData);
   }
 }
