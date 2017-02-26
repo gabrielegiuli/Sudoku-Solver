@@ -43,7 +43,7 @@ var b = null;
 function setup() {
   createCanvas(300, 300);
   background(255);
-  drawTable();
+  drawTable(tableData);
 }
 
 //Call when the user clicks with the mouse
@@ -68,7 +68,7 @@ function mousePressed() {
   //selected tile, to highlight that
   if(a != null && b != null) {
     background(255);
-    drawTable();
+    drawTable(tableData);
 
     noFill();
     strokeWeight(4);
@@ -89,7 +89,7 @@ function keyPressed() {
     if(a != null && b != null) {
       tableData[a][b] = key;
       background(255);
-      drawTable();
+      drawTable(tableData);
       a = null;
       b = null;
     }
@@ -97,16 +97,17 @@ function keyPressed() {
     print('Solving...');
     tableData = solve(tableData);
     background(255);
-    drawTable();
+    drawTable(tableData);
   } else if(keyCode == 32 && a != null && b != null) { //If the space bar is pressed clear the selected tile
     tableData[a][b] = null;
     background(255);
-    drawTable();
+    drawTable(tableData);
   }
 }
 
 //Draws the table (lines and numbers in tiles)
-function drawTable() {
+function drawTable(data) {
+  background(255, 255, 255);
   stroke(0, 0, 0);
   fill(0, 0, 0);
 
@@ -125,9 +126,9 @@ function drawTable() {
   //Prints the numbers in the tiles
   for(var i = 0; i < 9; i++) {
     for(var j = 0; j < 9; j++) {
-      if(tableData[i][j] != null) {
+      if(data[i][j] != null) {
         strokeWeight(1);
-        text(tableData[i][j], x + (i * TILE_LENGTH) + TILE_LENGTH/2 - 3, y + (j * TILE_LENGTH) + TILE_LENGTH/2 + 5);
+        text(data[i][j], x + (i * TILE_LENGTH) + TILE_LENGTH/2 - 3, y + (j * TILE_LENGTH) + TILE_LENGTH/2 + 5);
       }
     }
   }
@@ -168,6 +169,7 @@ function solve(data) {
     if(tables.length == 0) { //If there are no tables...
       return null; //Exits the recursion with null
     }
+
     for(var i = 0; i < tables.length; i++) {
       let result = solve(tables[i]);
       if(result != null) {
@@ -194,7 +196,7 @@ function rawCheckSolve(data) {
         //print('Done');
         data[i][j] = res[0];
         //background(255);
-        //drawTable();
+        //drawTable(tableData);
         changed = true;
       }
     }
